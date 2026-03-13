@@ -1,0 +1,56 @@
+plugins {
+	id 'java'
+	id 'application'
+	id("com.gradleup.shadow") version "9.3.0"
+}
+
+group = 'etri'
+version = System.getenv("MDT_BUILD_VERSION") ?: "unknown"
+
+application {
+	mainClass = 'mdt.cli.MDTCommandsMain'
+}
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
+}
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+    mavenLocal()
+	maven {
+		url = uri("https://maven.aksw.org/repository/internal/")
+		allowInsecureProtocol = true
+	}
+	mavenCentral()
+}
+
+dependencies {
+	implementation project(":utils")
+	implementation project(":mdt-client")
+}
+
+jar {
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+	// 다른 프로젝트의 logback.xml만 제외하고, 자신의 것은 포함
+	exclude 'logback-test.xml'
+	exclude 'logback-spring.xml'
+}
+
+shadowJar {
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+	mergeServiceFiles()
+	
+	exclude 'META-INF/*.SF'
+	exclude 'META-INF/*.DSA'
+	exclude 'META-INF/*.RSA'
+}
