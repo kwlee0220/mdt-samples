@@ -20,6 +20,7 @@ public class GetMDTInstance {
 		// 'test'라는 식별자를 가진 MDTInstance를 얻어온다.
 		MDTInstance inst = manager.getInstance("test");
 		
-		System.out.printf("%s: status=%s, endpoint=%s", inst.getId(), inst.getStatus(), inst.getServiceEndpoint());
+		// MDTInstance의 속성 정보를 출력한다.
+		Utils.printMDTInstance(inst);
 	}
 }

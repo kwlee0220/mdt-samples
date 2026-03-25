@@ -37,6 +37,10 @@ repositories {
 dependencies {
 	implementation project(":utils")
 	implementation project(":mdt-client")
+
+	// Lombok (from the project :utils)
+	compileOnly "org.projectlombok:lombok:${lombok_version}"
+	annotationProcessor "org.projectlombok:lombok:${lombok_version}"
 }
 
 jar {
