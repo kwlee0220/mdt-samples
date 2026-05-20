@@ -3,8 +3,8 @@ package mdt.sample;
 import java.util.List;
 import java.util.Map;
 
-import utils.KeyValue;
 import utils.func.Funcs;
+import utils.stream.FStream;
 
 import mdt.client.HttpMDTManager;
 import mdt.model.instance.MDTInstance;
@@ -40,7 +40,9 @@ public class ListParametersOfInstance {
 							paramDesc.getId(), paramDesc.getName(), paramDesc.getValueType(), paramSvc.read());
 		}
 		
-		Map<String,MDTParameterService> paramMap = Funcs.toMap(paramColl, svc -> KeyValue.of(svc.getId(), svc));
+		Map<String,MDTParameterService> paramMap = FStream.from(paramColl)
+															.tagKey(MDTParameterService::getId)
+															.toMap();
 		
 		MDTParameterService status = paramMap.get("Status");
 		ElementValue old = status.read();

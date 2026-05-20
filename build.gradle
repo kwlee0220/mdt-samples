@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'application'
 	id("com.gradleup.shadow") version "9.3.0"
+	id 'eclipse'
 }
 
 group = 'etri'
@@ -37,6 +38,8 @@ repositories {
 dependencies {
 	implementation project(":utils")
 	implementation project(":mdt-client")
+	implementation "org.eclipse.digitaltwin.aas4j:aas4j-model:${aas4j_version}"
+	implementation "org.eclipse.digitaltwin.aas4j:aas4j-dataformat-aasx:${aas4j_version}"
 
 	// Lombok (from the project :utils)
 	compileOnly "org.projectlombok:lombok:${lombok_version}"
@@ -58,3 +61,30 @@ shadowJar {
 	exclude 'META-INF/*.DSA'
 	exclude 'META-INF/*.RSA'
 }
+
+tasks.named('test') {
+	useJUnit()
+	jvmArgs '--add-opens=java.base/java.lang=ALL-UNNAMED'
+}
+
+eclipse {
+	classpath {
+		defaultOutputDir = file('build/classes/java/main')
+		file {
+			whenMerged { cp ->
+				cp.entries.each { entry ->
+					if (entry.kind == 'src' && entry.path == 'src/main/java') {
+						entry.output = 'build/classes/java/main'
+					}
+					if (entry.kind == 'src' && entry.path == 'src/main/resources') {
+						entry.output = 'build/classes/java/main'
+					}
+					if (entry.kind == 'src' && entry.path == 'src/test/java') {
+						entry.output = 'build/classes/java/test'
+					}
+				}
+			}
+		}
+	}
+}
+

@@ -5,6 +5,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 
 import mdt.client.HttpMDTManager;
 import mdt.model.ReferenceUtils;
+import mdt.model.ResourceNotFoundException;
 import mdt.model.SubmodelService;
 import mdt.model.instance.MDTInstance;
 import mdt.model.instance.MDTInstanceManager;
@@ -26,7 +27,8 @@ public class GetSubmodelOfInstance {
 		MDTInstance inst = manager.getInstance("test");
 		
 		// MDTInstance에 등록된 SubmodelService 중에서 idShort이 'Data'인 SubmodelService를 얻어온다.
-		SubmodelService smSvc = inst.getSubmodelServiceByIdShort("Data");
+		SubmodelService smSvc = inst.getSubmodelServiceByIdShort("Data")
+									.getOrThrow(() -> ResourceNotFoundException.ofIdShort("Submodel", "Data"));
 
 		// SubmodelService에서 Submodel을 얻어온다.
 		Submodel sm = smSvc.getSubmodel();

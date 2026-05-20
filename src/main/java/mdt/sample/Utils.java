@@ -1,15 +1,16 @@
 package mdt.sample;
 
-import lombok.experimental.UtilityClass;
-
 import mdt.model.instance.MDTInstance;
 
 /**
  *
  * @author Kang-Woo Lee (ETRI)
  */
-@UtilityClass
-public class Utils {
+public final class Utils {
+	private Utils() {
+		throw new AssertionError("Should not be called: class=" + getClass().getName());
+	}
+	
 	public static void printMDTInstance(MDTInstance inst) {
 		System.out.printf("id: %s%n", inst.getId());
 		System.out.printf("AAS-id: %s%n", inst.getAasId());
