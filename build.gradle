@@ -62,11 +62,6 @@ shadowJar {
 	exclude 'META-INF/*.RSA'
 }
 
-tasks.named('test') {
-	useJUnit()
-	jvmArgs '--add-opens=java.base/java.lang=ALL-UNNAMED'
-}
-
 eclipse {
 	classpath {
 		defaultOutputDir = file('build/classes/java/main')
