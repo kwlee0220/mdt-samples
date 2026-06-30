@@ -38,12 +38,18 @@ repositories {
 dependencies {
 	implementation project(":utils")
 	implementation project(":mdt-client")
+	
 	implementation "org.eclipse.digitaltwin.aas4j:aas4j-model:${aas4j_version}"
 	implementation "org.eclipse.digitaltwin.aas4j:aas4j-dataformat-aasx:${aas4j_version}"
 
 	// Lombok (from the project :utils)
 	compileOnly "org.projectlombok:lombok:${lombok_version}"
 	annotationProcessor "org.projectlombok:lombok:${lombok_version}"
+	
+	runtimeOnly "org.postgresql:postgresql:${postgresql_version}"
+	
+	// HTTP Client
+	implementation "com.squareup.okhttp3:okhttp:${okhttp_version}"
 }
 
 jar {

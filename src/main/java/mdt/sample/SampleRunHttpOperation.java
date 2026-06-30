@@ -17,7 +17,6 @@ import mdt.client.operation.HttpOperationClient;
 import mdt.client.operation.OperationRequest;
 import mdt.client.operation.OperationResponse;
 import mdt.model.instance.MDTInstance;
-import mdt.model.sm.SubmodelUtils;
 import mdt.model.sm.ref.MDTParameterReference;
 
 /**
@@ -46,15 +45,11 @@ public class SampleRunHttpOperation {
 		SubmodelElement sleepTimeSme = sleepTime.read();
 //		Property sleepTimeSme = PropertyUtils.INT("SleepTime", 10);
 		
-		SubmodelElement output = SubmodelUtils.duplicate(dataSme);
-		output.setIdShort("Output");
-			
 		OkHttpClient http = OkHttpClientUtils.newTrustAllOkHttpClientBuilder().build();
-		
+
 		OperationRequest req = new OperationRequest();
 		req.setOperation("test/Simulation");
 		req.setInputArguments(Map.of("Data", dataSme, "IncAmount", incAmountSme, "SleepTime", sleepTimeSme));
-		req.setOutputArguments(Map.of("Output", output));
 		
 		HttpOperationClient opClient = HttpOperationClient.builder()
 														.setHttpClient(http)
