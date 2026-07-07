@@ -1,7 +1,5 @@
 package mdt.sample;
 
-import java.util.List;
-
 import mdt.client.HttpMDTManager;
 import mdt.model.instance.MDTInstance;
 import mdt.model.instance.MDTInstanceManager;
