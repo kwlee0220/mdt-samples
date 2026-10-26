@@ -1,10 +1,11 @@
 package mdt.sample.workflow;
 
 import mdt.client.HttpMDTManager;
+import mdt.task.SetTask;
 import mdt.workflow.WorkflowManager;
 import mdt.workflow.WorkflowModel;
+import mdt.workflow.model.ArgumentSpec;
 import mdt.workflow.model.TaskDescriptor;
-import mdt.workflow.model.TaskDescriptors;
 
 
 /**
@@ -26,17 +27,26 @@ public class SampleWorkflowDescriptor1 {
 
 		TaskDescriptor taskDesc;
 
-		taskDesc = TaskDescriptors.newSetTaskDescriptor("set", "'222'", "param:test:1");
+		taskDesc = newSetTaskDescriptor("set", "'222'", "param:test:1");
 		wfModel.getTaskDescriptors().add(taskDesc);
 		
-		taskDesc = TaskDescriptors.newSetTaskDescriptor("copy", "param:test:IncAmount",
+		taskDesc = newSetTaskDescriptor("copy", "param:test:IncAmount",
 														"oparg:test:AddAndSleep:in:1"); 
-		taskDesc.getDependencies().add("set");
+		taskDesc.addDependency("set");
 		
 		wfModel.getTaskDescriptors().add(taskDesc);
 
 		WorkflowManager wfManager = mdt.getWorkflowManager();
 		wfModel = wfManager.addOrReplaceWorkflowModel(wfModel);
 		System.out.println(wfModel.toJsonString());
+	}
+	
+	private static TaskDescriptor newSetTaskDescriptor(String taskId, String valueExpr, String targetRefExpr) {
+		TaskDescriptor descriptor = new TaskDescriptor(taskId, "", SetTask.class.getName());
+		
+		descriptor.addInputArgument(ArgumentSpec.reference("value", valueExpr));
+		descriptor.addOutputArgument(ArgumentSpec.reference("target", targetRefExpr));
+		
+		return descriptor;
 	}
 }

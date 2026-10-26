@@ -5,10 +5,12 @@ import mdt.client.instance.HttpMDTInstanceManager;
 import mdt.model.NameValue;
 import mdt.model.instance.MDTInstanceManager;
 import mdt.model.sm.ref.DefaultSubmodelReference;
-import mdt.task.builtin.HttpTask;
-import mdt.task.builtin.TaskUtils;
+import mdt.task.RESTfulAsyncRpcTask;
+import mdt.task.SetTask;
+import mdt.task.TaskUtils;
 import mdt.workflow.WorkflowManager;
 import mdt.workflow.WorkflowModel;
+import mdt.workflow.model.ArgumentSpec;
 import mdt.workflow.model.TaskDescriptor;
 import mdt.workflow.model.TaskDescriptors;
 
@@ -35,17 +37,17 @@ public class WfProcessSimulation {
 
 		TaskDescriptor taskDesc;
 
-		taskDesc = TaskDescriptors.newSetTaskDescriptor("copy-defect-list", "param:inspector:Data:1",
-													"oparg:inspector:ProcessSimulation:in:0");
+		taskDesc = newSetTaskDescriptor("copy-defect-list", "param:inspector:Data:1",
+										"oparg:inspector:ProcessSimulation:in:0");
 		wfDesc.getTaskDescriptors().add(taskDesc);
 
 		taskDesc = simulateProcess(manager, "simulate-process");
 		taskDesc.getDependencies().add("copy-defect-list");
 		wfDesc.getTaskDescriptors().add(taskDesc);
 		
-		taskDesc = TaskDescriptors.newSetTaskDescriptor("copy-avg-cycle-time",
-													"oparg:inspector:ProcessSimulation:out:0",
-													"param:inspector0");
+		taskDesc = newSetTaskDescriptor("copy-avg-cycle-time",
+										"oparg:inspector:ProcessSimulation:out:0",
+										"param:inspector0");
 		taskDesc.getDependencies().add("simulate-process");
 		wfDesc.getTaskDescriptors().add(taskDesc);
 		
@@ -61,7 +63,7 @@ public class WfProcessSimulation {
 		TaskDescriptor task = new TaskDescriptor();
 		
 		task.setId(id);
-		task.setType(HttpTask.class.getName());
+		task.setType(RESTfulAsyncRpcTask.class.getName());
 		task.addOption("server", HTTP_OP_SERVER_ENDPOINT);
 		task.addOption("id", "inspector/ProcessSimulation");
 		task.addOption("timeout", "1m");
@@ -74,5 +76,14 @@ public class WfProcessSimulation {
 		TaskDescriptors.loadSimulationVariables(task, smRef);
 		
 		return task;
+	}
+	
+	private static TaskDescriptor newSetTaskDescriptor(String taskId, String valueExpr, String targetRefExpr) {
+		TaskDescriptor descriptor = new TaskDescriptor(taskId, "", SetTask.class.getName());
+		
+		descriptor.addInputArgument(ArgumentSpec.reference("value", valueExpr));
+		descriptor.addOutputArgument(ArgumentSpec.reference("target", targetRefExpr));
+		
+		return descriptor;
 	}
 }

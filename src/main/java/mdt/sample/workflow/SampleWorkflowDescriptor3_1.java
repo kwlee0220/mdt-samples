@@ -6,9 +6,7 @@ import mdt.model.NameValue;
 import mdt.model.instance.MDTInstanceManager;
 import mdt.model.sm.ref.DefaultElementReference;
 import mdt.model.sm.ref.MDTElementReference;
-import mdt.task.builtin.AASOperationTask;
-import mdt.task.builtin.HttpTask;
-import mdt.task.builtin.TaskUtils;
+import mdt.task.RESTfulAsyncRpcTask;
 import mdt.workflow.WorkflowManager;
 import mdt.workflow.WorkflowModel;
 import mdt.workflow.model.ArgumentSpec;
@@ -45,19 +43,19 @@ public class SampleWorkflowDescriptor3_1 {
 	}
 	
 	private static TaskDescriptor newHttpTask(MDTInstanceManager manager, String taskId) {
-		TaskDescriptor descriptor = new TaskDescriptor(taskId, "", HttpTask.class.getName());
+		TaskDescriptor descriptor = new TaskDescriptor(taskId, "", RESTfulAsyncRpcTask.class.getName());
 		
 		MDTElementReference opRef = DefaultElementReference.newInstance("test", "AddAndSleep", "Operation");
-		descriptor.addOption(AASOperationTask.OPTION_OPERATION, opRef.toStringExpr());
-		descriptor.addOption(AASOperationTask.OPTION_POLL_INTERVAL, "1.0");
-		descriptor.addOption(AASOperationTask.OPTION_TIMEOUT, "60");
-		descriptor.addOption(AASOperationTask.OPTION_LOG_LEVEL, "info");
-		descriptor.getLabels().add(NameValue.of(TaskUtils.LABEL_MDT_OPERATION, "test:AddAndSleep"));
+		descriptor.addOption(TaskDescriptor.OPTION_OPERATION, opRef.toStringExpr());
+		descriptor.addOption(TaskDescriptor.OPTION_POLL_INTERVAL, "1.0");
+		descriptor.addOption(TaskDescriptor.OPTION_TIMEOUT, "60");
+		descriptor.addOption(TaskDescriptor.OPTION_LOG_LEVEL, "info");
+		descriptor.getLabels().add(NameValue.of(TaskDescriptor.LABEL_MDT_OPERATION, "test:AddAndSleep"));
 		
-		descriptor.addInputArgumentSpec("Data", ArgumentSpec.reference("param:test:Data"));
-		descriptor.addInputArgumentSpec("IncAmount", ArgumentSpec.literal(7));
-		descriptor.addInputArgumentSpec("SleepTime", ArgumentSpec.reference("param:test:SleepTime"));
-		descriptor.addOutputArgumentSpec("Output", ArgumentSpec.reference("param:test:Data"));
+		descriptor.addInputArgument(ArgumentSpec.reference("Data", "param:test:Data"));
+		descriptor.addInputArgument(ArgumentSpec.literal("IncAmount", 7));
+		descriptor.addInputArgument(ArgumentSpec.reference("SleepTime", "param:test:SleepTime"));
+		descriptor.addInputArgument(ArgumentSpec.reference("Output", "param:test:Data"));
 		
 		return descriptor;
 	}

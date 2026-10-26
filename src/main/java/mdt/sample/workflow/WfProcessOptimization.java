@@ -5,10 +5,12 @@ import mdt.client.instance.HttpMDTInstanceManager;
 import mdt.model.NameValue;
 import mdt.model.instance.MDTInstanceManager;
 import mdt.model.sm.ref.DefaultSubmodelReference;
-import mdt.task.builtin.HttpTask;
-import mdt.task.builtin.TaskUtils;
+import mdt.task.RESTfulAsyncRpcTask;
+import mdt.task.SetTask;
+import mdt.task.TaskUtils;
 import mdt.workflow.WorkflowManager;
 import mdt.workflow.WorkflowModel;
+import mdt.workflow.model.ArgumentSpec;
 import mdt.workflow.model.TaskDescriptor;
 import mdt.workflow.model.TaskDescriptors;
 
@@ -35,22 +37,22 @@ public class WfProcessOptimization {
 
 		TaskDescriptor taskDesc;
 
-		taskDesc = TaskDescriptors.newSetTaskDescriptor("copy-heater-cycletime",
+		taskDesc = newSetTaskDescriptor("copy-heater-cycletime",
 													"param:heater:0",
 													"oparg:innercase:ProcessOptimization:in:0");
 		wfDesc.getTaskDescriptors().add(taskDesc);
 
-		taskDesc = TaskDescriptors.newSetTaskDescriptor("copy-former-cycletime",
+		taskDesc = newSetTaskDescriptor("copy-former-cycletime",
 													"param:former:0",
 													"oparg:innercase:ProcessOptimization:in:1");
 		wfDesc.getTaskDescriptors().add(taskDesc);
 
-		taskDesc = TaskDescriptors.newSetTaskDescriptor("copy-trimmer-cycletime",
+		taskDesc = newSetTaskDescriptor("copy-trimmer-cycletime",
 													"param:trimmer:0",
 													"oparg:innercase:ProcessOptimization:in:2");
 		wfDesc.getTaskDescriptors().add(taskDesc);
 
-		taskDesc = TaskDescriptors.newSetTaskDescriptor("copy-inspector-cycletime",
+		taskDesc = newSetTaskDescriptor("copy-inspector-cycletime",
 													"param:inspector:0",
 													"oparg:innercase:ProcessOptimization:in:3");
 		wfDesc.getTaskDescriptors().add(taskDesc);
@@ -74,7 +76,7 @@ public class WfProcessOptimization {
 		TaskDescriptor task = new TaskDescriptor();
 		
 		task.setId(id);
-		task.setType(HttpTask.class.getName());
+		task.setType(RESTfulAsyncRpcTask.class.getName());
 		
 		task.addOption("server", HTTP_OP_SERVER_ENDPOINT);
 		task.addOption("id", "innercase/ProcessOptimization");
@@ -88,5 +90,14 @@ public class WfProcessOptimization {
 		TaskDescriptors.loadSimulationVariables(task, smRef);
 		
 		return task;
+	}
+	
+	private static TaskDescriptor newSetTaskDescriptor(String taskId, String valueExpr, String targetRefExpr) {
+		TaskDescriptor descriptor = new TaskDescriptor(taskId, "", SetTask.class.getName());
+		
+		descriptor.addInputArgument(ArgumentSpec.reference("value", valueExpr));
+		descriptor.addOutputArgument(ArgumentSpec.reference("target", targetRefExpr));
+		
+		return descriptor;
 	}
 }

@@ -1,10 +1,11 @@
 package mdt.sample.workflow;
 
 import mdt.client.HttpMDTManager;
+import mdt.task.SetTask;
 import mdt.workflow.WorkflowManager;
 import mdt.workflow.WorkflowModel;
+import mdt.workflow.model.ArgumentSpec;
 import mdt.workflow.model.TaskDescriptor;
-import mdt.workflow.model.TaskDescriptors;
 
 
 /**
@@ -26,15 +27,15 @@ public class SampleWorkflowDescriptor2 {
 
 		TaskDescriptor taskDesc;
 
-		taskDesc = TaskDescriptors.newSetTaskDescriptor("copy-data", "param:test:Data",
+		taskDesc = newSetTaskDescriptor("copy-data", "param:test:Data",
 														"oparg:test:AddAndSleep:in:Data");
 		wfModel.getTaskDescriptors().add(taskDesc);
 
-		taskDesc = TaskDescriptors.newSetTaskDescriptor("copy-inc-amount", "param:test:IncAmount",
+		taskDesc = newSetTaskDescriptor("copy-inc-amount", "param:test:IncAmount",
 														"oparg:test:AddAndSleep:in:IncAmount");
 		wfModel.getTaskDescriptors().add(taskDesc);
 
-		taskDesc = TaskDescriptors.newSetTaskDescriptor("set-sleeptime", "'3'",
+		taskDesc = newSetTaskDescriptor("set-sleeptime", "'3'",
 														"oparg:test:AddAndSleep:in:SleepTime");
 		wfModel.getTaskDescriptors().add(taskDesc);
 
@@ -42,5 +43,14 @@ public class SampleWorkflowDescriptor2 {
 		wfModel = wfManager.addOrReplaceWorkflowModel(wfModel);
 
 		System.out.println(wfModel.toJsonString());
+	}
+	
+	private static TaskDescriptor newSetTaskDescriptor(String taskId, String valueExpr, String targetRefExpr) {
+		TaskDescriptor descriptor = new TaskDescriptor(taskId, "", SetTask.class.getName());
+		
+		descriptor.addInputArgument(ArgumentSpec.reference("value", valueExpr));
+		descriptor.addOutputArgument(ArgumentSpec.reference("target", targetRefExpr));
+		
+		return descriptor;
 	}
 }

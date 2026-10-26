@@ -6,8 +6,8 @@ import mdt.client.HttpMDTManager;
 import mdt.client.instance.HttpMDTInstanceManager;
 import mdt.model.NameValue;
 import mdt.model.instance.MDTInstanceManager;
-import mdt.task.builtin.HttpTask;
-import mdt.task.builtin.TaskUtils;
+import mdt.task.RESTfulAsyncRpcTask;
+import mdt.task.TaskUtils;
 import mdt.workflow.WorkflowManager;
 import mdt.workflow.WorkflowModel;
 import mdt.workflow.model.ArgumentSpec;
@@ -45,23 +45,23 @@ public class SampleWorkflowDescriptor3 {
 	}
 	
 	private static TaskDescriptor newHttpTask(MDTInstanceManager manager, String taskId) {
-		TaskDescriptor task = new TaskDescriptor(taskId, "", HttpTask.class.getName());
+		TaskDescriptor task = new TaskDescriptor(taskId, "", RESTfulAsyncRpcTask.class.getName());
 		
 		StringSubstitutor subst = new StringSubstitutor(System.getenv());
 		String resolvedEndpoint = subst.replace(HTTP_OP_SERVER_ENDPOINT);
 
-		task.addOption(HttpTask.OPTION_OPERATION, "test:AddAndSleep");
-		task.addOption(HttpTask.OPTION_SERVER_ENDPOINT, resolvedEndpoint);
-		task.addOption(HttpTask.OPTION_POLL_INTERVAL, "1.0");
-		task.addOption(HttpTask.OPTION_TIMEOUT, "60");
-		task.addOption(HttpTask.OPTION_LOG_LEVEL, "info");
+		task.addOption(RESTfulAsyncRpcTask.OPTION_BASE_URL, resolvedEndpoint);
+		task.addOption(RESTfulAsyncRpcTask.OPTION_OPERATION_ENDPOINT, "/operations/AddAndSleep");
+		task.addOption(RESTfulAsyncRpcTask.OPTION_POLL_INTERVAL, "1.0");
+		task.addOption(RESTfulAsyncRpcTask.OPTION_TIMEOUT, "60");
+		task.addOption(RESTfulAsyncRpcTask.OPTION_LOG_LEVEL, "info");
 		task.getLabels().add(NameValue.of(TaskUtils.LABEL_MDT_OPERATION, "test:AddAndSleep"));
 
-		task.addInputArgumentSpec("Data", ArgumentSpec.reference("param:test:Data"));
-		task.addInputArgumentSpec("IncAmount", ArgumentSpec.literal(11));
-		task.addInputArgumentSpec("SleepTime", 
-								ArgumentSpec.reference("test:Data:DataInfo.Equipment.EquipmentParameterValues[2].ParameterValue"));
-		task.addOutputArgumentSpec("Output", ArgumentSpec.reference("param:test:Data"));
+		task.addInputArgument(ArgumentSpec.reference("Data", "param:test:Data"));
+		task.addInputArgument(ArgumentSpec.literal("IncAmount", 11));
+		task.addInputArgument(ArgumentSpec.reference("SleepTime",
+								"test:Data:DataInfo.Equipment.EquipmentParameterValues[2].ParameterValue"));
+		task.addOutputArgument(ArgumentSpec.reference("Output", "param:test:Data"));
 		
 		return task;
 	}

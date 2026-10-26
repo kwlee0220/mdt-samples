@@ -5,10 +5,12 @@ import mdt.client.instance.HttpMDTInstanceManager;
 import mdt.model.NameValue;
 import mdt.model.instance.MDTInstanceManager;
 import mdt.model.sm.ref.DefaultSubmodelReference;
-import mdt.task.builtin.HttpTask;
-import mdt.task.builtin.TaskUtils;
+import mdt.task.RESTfulAsyncRpcTask;
+import mdt.task.SetTask;
+import mdt.task.TaskUtils;
 import mdt.workflow.WorkflowManager;
 import mdt.workflow.WorkflowModel;
+import mdt.workflow.model.ArgumentSpec;
 import mdt.workflow.model.TaskDescriptor;
 import mdt.workflow.model.TaskDescriptors;
 
@@ -35,7 +37,7 @@ public class WfThicknessDefectInspection {
 
 		TaskDescriptor taskDesc;
 		
-		taskDesc = TaskDescriptors.newSetTaskDescriptor("copy-image", "param:inspector:Data:2",
+		taskDesc = newSetTaskDescriptor("copy-image", "param:inspector:Data:2",
 															"oparg:inspector:ThicknessInspection:in:0");
 		wfDesc.getTaskDescriptors().add(taskDesc);
 
@@ -43,13 +45,13 @@ public class WfThicknessDefectInspection {
 		taskDesc.getDependencies().add("copy-image");
 		wfDesc.getTaskDescriptors().add(taskDesc);
 		
-		taskDesc = TaskDescriptors.newSetTaskDescriptor("copy-defect",
+		taskDesc = newSetTaskDescriptor("copy-defect",
 															"oparg:inspector:ThicknessInspection:out:0",
 															"oparg:inspector:UpdateDefectList:in:0");
 		taskDesc.getDependencies().add("inspect-thickness");
 		wfDesc.getTaskDescriptors().add(taskDesc);
 
-		taskDesc = TaskDescriptors.newSetTaskDescriptor("copy-defect-list", "param:inspector:Data:1",
+		taskDesc = newSetTaskDescriptor("copy-defect-list", "param:inspector:Data:1",
 															"oparg:inspector:UpdateDefectList:in:1");
 		wfDesc.getTaskDescriptors().add(taskDesc);
 
@@ -58,7 +60,7 @@ public class WfThicknessDefectInspection {
 		taskDesc.getDependencies().add("copy-defect-list");
 		wfDesc.getTaskDescriptors().add(taskDesc);
 		
-		taskDesc = TaskDescriptors.newSetTaskDescriptor("copy-updated-defect-list",
+		taskDesc = newSetTaskDescriptor("copy-updated-defect-list",
 															"oparg:inspector:UpdateDefectList:out:0",
 															"param:inspector:Data:1");
 		taskDesc.getDependencies().add("update-defect-list");
@@ -76,7 +78,7 @@ public class WfThicknessDefectInspection {
 		TaskDescriptor task = new TaskDescriptor();
 		
 		task.setId(id);
-		task.setType(HttpTask.class.getName());
+		task.setType(RESTfulAsyncRpcTask.class.getName());
 		task.addOption("server", HTTP_OP_SERVER_ENDPOINT);
 		task.addOption("id", "inspector/ThicknessInspection");
 		task.addOption("timeout", "1m");
@@ -95,7 +97,7 @@ public class WfThicknessDefectInspection {
 		TaskDescriptor task = new TaskDescriptor();
 		
 		task.setId(id);
-		task.setType(HttpTask.class.getName());
+		task.setType(RESTfulAsyncRpcTask.class.getName());
 		task.addOption("server", HTTP_OP_SERVER_ENDPOINT);
 		task.addOption("id", "inspector/UpdateDefectList");
 		task.addOption("timeout", "1m");
@@ -108,5 +110,14 @@ public class WfThicknessDefectInspection {
 		TaskDescriptors.loadAIVariables(task, smRef);
 		
 		return task;
+	}
+	
+	private static TaskDescriptor newSetTaskDescriptor(String taskId, String valueExpr, String targetRefExpr) {
+		TaskDescriptor descriptor = new TaskDescriptor(taskId, "", SetTask.class.getName());
+		
+		descriptor.addInputArgument(ArgumentSpec.reference("value", valueExpr));
+		descriptor.addOutputArgument(ArgumentSpec.reference("target", targetRefExpr));
+		
+		return descriptor;
 	}
 }

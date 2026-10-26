@@ -28,11 +28,16 @@ configurations {
 
 repositories {
     mavenLocal()
-	maven {
-		url = uri("https://maven.aksw.org/repository/internal/")
-		allowInsecureProtocol = true
-	}
 	mavenCentral()
+}
+
+ext {
+	lombok_version = '1.18.46'
+
+	okhttp_version = '4.12.0'
+	aas4j_version = '1.0.5'
+
+	postgresql_version = '42.3.3'
 }
 
 dependencies {

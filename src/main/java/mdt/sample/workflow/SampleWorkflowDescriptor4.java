@@ -5,11 +5,11 @@ import mdt.client.instance.HttpMDTInstanceManager;
 import mdt.model.sm.ref.DefaultElementReference;
 import mdt.model.sm.ref.DefaultSubmodelReference;
 import mdt.model.sm.ref.DefaultSubmodelReference.ByIdShortSubmodelReference;
+import mdt.task.AASOperationTask;
 import mdt.task.MDTTask;
-import mdt.task.builtin.AASOperationTask;
-import mdt.task.builtin.HttpTask;
-import mdt.task.builtin.SetTask;
-import mdt.task.builtin.TaskUtils;
+import mdt.task.RESTfulAsyncRpcTask;
+import mdt.task.SetTask;
+import mdt.task.TaskUtils;
 import mdt.workflow.WorkflowManager;
 import mdt.workflow.WorkflowModel;
 import mdt.workflow.model.ArgumentSpec;
@@ -40,22 +40,22 @@ public class SampleWorkflowDescriptor4 {
 		descriptor = new TaskDescriptor();
 		descriptor.setType(SetTask.class.getName());
 		descriptor.setId("copy-data");
-		descriptor.addInputArgumentSpec("source", ArgumentSpec.reference("param:test:Data"));
-		descriptor.addOutputArgumentSpec("target", ArgumentSpec.reference("oparg:test:AddAndSleep:in:Data"));
+		descriptor.addInputArgument(ArgumentSpec.reference("source", "param:test:Data"));
+		descriptor.addOutputArgument(ArgumentSpec.reference("target", "oparg:test:AddAndSleep:in:Data"));
 		wfModel.getTaskDescriptors().add(descriptor);
 
 		descriptor = new TaskDescriptor();
 		descriptor.setType(SetTask.class.getName());
 		descriptor.setId("copy-inc-amount");
-		descriptor.addInputArgumentSpec("source", ArgumentSpec.reference("param:test:IncAmount"));
-		descriptor.addOutputArgumentSpec("target", ArgumentSpec.reference("oparg:test:AddAndSleep:in:IncAmount"));
+		descriptor.addInputArgument(ArgumentSpec.reference("source", "param:test:IncAmount"));
+		descriptor.addOutputArgument(ArgumentSpec.reference("target", "oparg:test:AddAndSleep:in:IncAmount"));
 		wfModel.getTaskDescriptors().add(descriptor);
 		
 		descriptor = new TaskDescriptor();
 		descriptor.setType(SetTask.class.getName());
 		descriptor.setId("set-sleeptime");
-		descriptor.addInputArgumentSpec("source", ArgumentSpec.literal(3));
-		descriptor.addOutputArgumentSpec("target", ArgumentSpec.reference("oparg:test:AddAndSleep:in:SleepTime"));
+		descriptor.addInputArgument(ArgumentSpec.literal("source", 3));
+		descriptor.addOutputArgument(ArgumentSpec.reference("target", "oparg:test:AddAndSleep:in:SleepTime"));
 		wfModel.getTaskDescriptors().add(descriptor);
 		
 		ByIdShortSubmodelReference smRef = DefaultSubmodelReference.ofIdShort("test", "AddAndSleep");
@@ -67,8 +67,8 @@ public class SampleWorkflowDescriptor4 {
 		descriptor = new TaskDescriptor();
 		descriptor.setType(SetTask.class.getName());
 		descriptor.setId("copy-result");
-		descriptor.addInputArgumentSpec("source", ArgumentSpec.reference("oparg:test:AddAndSleep:out:Output"));
-		descriptor.addOutputArgumentSpec("target", ArgumentSpec.reference("param:test:Data"));
+		descriptor.addInputArgument(ArgumentSpec.reference("source", "oparg:test:AddAndSleep:out:Output"));
+		descriptor.addOutputArgument(ArgumentSpec.reference("target", "param:test:Data"));
 		descriptor.addDependency("sleep-and-add");
 		wfModel.getTaskDescriptors().add(descriptor);
 
@@ -81,9 +81,9 @@ public class SampleWorkflowDescriptor4 {
 	private static TaskDescriptor newHttpTask(String taskId, ByIdShortSubmodelReference smRef) {
 		TaskDescriptor descriptor = new TaskDescriptor();
 		descriptor.setId(taskId);
-		descriptor.setType(HttpTask.class.getName());
-		descriptor.addOption(HttpTask.OPTION_SERVER_ENDPOINT, HTTP_OP_SERVER_ENDPOINT);
-		descriptor.addOption(HttpTask.OPTION_OPERATION, smRef.getInstanceId() + "/" + smRef.getSubmodelIdShort());
+		descriptor.setType(RESTfulAsyncRpcTask.class.getName());
+		descriptor.addOption(RESTfulAsyncRpcTask.OPTION_BASE_URL, HTTP_OP_SERVER_ENDPOINT);
+		descriptor.addOption(RESTfulAsyncRpcTask.OPTION_OPERATION_ENDPOINT, smRef.getInstanceId() + "/" + smRef.getSubmodelIdShort());
 		descriptor.addOption(MDTTask.OPTION_TIMEOUT, "im");
 		descriptor.addOption(MDTTask.OPTION_POLL_INTERVAL, "3s");
 		descriptor.addLabel(TaskUtils.LABEL_MDT_OPERATION, smRef.toStringExpr());
@@ -98,10 +98,10 @@ public class SampleWorkflowDescriptor4 {
 		TaskDescriptor descriptor = new TaskDescriptor();
 		descriptor.setId(taskId);
 		descriptor.setType(AASOperationTask.class.getName());
-		descriptor.addOption(AASOperationTask.OPTION_OPERATION, opElmExpr);
-		descriptor.addOption(MDTTask.OPTION_TIMEOUT, "im");
-		descriptor.addOption(MDTTask.OPTION_POLL_INTERVAL, "3s");
-		descriptor.addOption(MDTTask.OPTION_LOG_LEVEL, "info");
+		descriptor.addOption(TaskDescriptor.OPTION_OPERATION, opElmExpr);
+		descriptor.addOption(TaskDescriptor.OPTION_TIMEOUT, "im");
+		descriptor.addOption(TaskDescriptor.OPTION_POLL_INTERVAL, "3s");
+		descriptor.addOption(TaskDescriptor.OPTION_LOG_LEVEL, "info");
 		descriptor.addLabel(TaskUtils.LABEL_MDT_OPERATION, smRef.toStringExpr());
 		descriptor.addDependency("copy-data", "copy-inc-amount", "set-sleeptime");
 		

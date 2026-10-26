@@ -5,10 +5,12 @@ import mdt.client.instance.HttpMDTInstanceManager;
 import mdt.model.NameValue;
 import mdt.model.instance.MDTInstanceManager;
 import mdt.model.sm.ref.DefaultSubmodelReference;
-import mdt.task.builtin.HttpTask;
-import mdt.task.builtin.TaskUtils;
+import mdt.task.RESTfulAsyncRpcTask;
+import mdt.task.SetTask;
+import mdt.task.TaskUtils;
 import mdt.workflow.WorkflowManager;
 import mdt.workflow.WorkflowModel;
+import mdt.workflow.model.ArgumentSpec;
 import mdt.workflow.model.TaskDescriptor;
 import mdt.workflow.model.TaskDescriptors;
 
@@ -33,7 +35,7 @@ public class SampleWorkflowDescriptor6 {
 
 		TaskDescriptor taskDesc;
 
-		taskDesc = TaskDescriptors.newSetTaskDescriptor("copy-image", "param:ktech_inspector:0",
+		taskDesc = newSetTaskDescriptor("copy-image", "param:ktech_inspector:0",
 												"oparg:ktech_inspector:SurfaceErrorDetection:in:0");
 		wfDesc.getTaskDescriptors().add(taskDesc);
 
@@ -41,7 +43,7 @@ public class SampleWorkflowDescriptor6 {
 		taskDesc.getDependencies().add("copy-image");
 		wfDesc.getTaskDescriptors().add(taskDesc);
 		
-		taskDesc = TaskDescriptors.newSetTaskDescriptor("copy-error-type",
+		taskDesc = newSetTaskDescriptor("copy-error-type",
 												"oparg:ktech_inspector:SurfaceErrorDetection:out:0",
 												"param:ktech_inspector:1");
 		taskDesc.getDependencies().add("detect-surface-error");
@@ -51,7 +53,7 @@ public class SampleWorkflowDescriptor6 {
 		taskDesc.getDependencies().add("detect-surface-error");
 		wfDesc.getTaskDescriptors().add(taskDesc);
 		
-		taskDesc = TaskDescriptors.newSetTaskDescriptor("copy-st-error",
+		taskDesc = newSetTaskDescriptor("copy-st-error",
 												"oparg:ktech_inspector:STErrorPrediction:out:0",
 												"param:ktech_inspector:2");
 		taskDesc.getDependencies().add("predict-st-error");
@@ -61,7 +63,7 @@ public class SampleWorkflowDescriptor6 {
 		taskDesc.getDependencies().add("predict-st-error");
 		wfDesc.getTaskDescriptors().add(taskDesc);
 		
-		taskDesc = TaskDescriptors.newSetTaskDescriptor("copy-lt-error",
+		taskDesc = newSetTaskDescriptor("copy-lt-error",
 												"oparg:ktech_inspector:STErrorPrediction:out:0",
 												"param:ktech_inspector:3");
 		taskDesc.getDependencies().add("predict-lt-error");
@@ -79,7 +81,7 @@ public class SampleWorkflowDescriptor6 {
 		TaskDescriptor task = new TaskDescriptor();
 		
 		task.setId(id);
-		task.setType(HttpTask.class.getName());
+		task.setType(RESTfulAsyncRpcTask.class.getName());
 
 		task.addOption("server", HTTP_OP_SERVER_ENDPOINT);
 		task.addOption("id", "ktech_inspector/SurfaceErrorDetection");
@@ -99,7 +101,7 @@ public class SampleWorkflowDescriptor6 {
 		TaskDescriptor task = new TaskDescriptor();
 		
 		task.setId(id);
-		task.setType(HttpTask.class.getName());
+		task.setType(RESTfulAsyncRpcTask.class.getName());
 
 		task.addOption("server", HTTP_OP_SERVER_ENDPOINT);
 		task.addOption("id", "ktech_inspector/STErrorPrediction");
@@ -119,7 +121,7 @@ public class SampleWorkflowDescriptor6 {
 		TaskDescriptor task = new TaskDescriptor();
 		
 		task.setId(id);
-		task.setType(HttpTask.class.getName());
+		task.setType(RESTfulAsyncRpcTask.class.getName());
 
 		task.addOption("server", HTTP_OP_SERVER_ENDPOINT);
 		task.addOption("id", "ktech_inspector/LTErrorPrediction");
@@ -133,5 +135,14 @@ public class SampleWorkflowDescriptor6 {
 		TaskDescriptors.loadAIVariables(task, smRef);
 		
 		return task;
+	}
+	
+	private static TaskDescriptor newSetTaskDescriptor(String taskId, String valueExpr, String targetRefExpr) {
+		TaskDescriptor descriptor = new TaskDescriptor(taskId, "", SetTask.class.getName());
+		
+		descriptor.addInputArgument(ArgumentSpec.reference("value", valueExpr));
+		descriptor.addOutputArgument(ArgumentSpec.reference("target", targetRefExpr));
+		
+		return descriptor;
 	}
 }

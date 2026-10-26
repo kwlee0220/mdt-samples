@@ -16,7 +16,7 @@ import mdt.model.sm.value.ElementCollectionValue;
  *
  * @author Kang-Woo Lee (ETRI)
  */
-public class SampleReadLastRecordsReference {
+public class SampleTimeSeriesRecordsReference {
 	public static void main(String[] args) throws Exception {
 		// 기본적인 설정 정보를 이용하여 MDT Manager에 접속한다.
 		HttpMDTManager mdt = HttpMDTManager.connectWithDefault();
@@ -25,7 +25,7 @@ public class SampleReadLastRecordsReference {
 		MDTInstanceManager manager = mdt.getInstanceManager();
 		
 		// TimeSeries SubmodelElementReference 관련
-		readRecords5(manager);
+		readRecords6(manager);
 	}
 	
 	private static void readRecords1(MDTInstanceManager manager) throws Exception {
@@ -50,6 +50,13 @@ public class SampleReadLastRecordsReference {
 	
 	private static void readRecords5(MDTInstanceManager manager) throws Exception {
 		String refStr = "timeseries:Welder:NozzleProductionLog#2023-05-25T04:20:42~2023-05-25T04:21:14|Time";
+		printSegment(manager, refStr);
+	}
+
+	private static void readRecords6(MDTInstanceManager manager) throws Exception {
+		// 'from+N': 종료 시각 대신 개수로 구간을 지정한다.
+		// (2023-05-25T04:20:42부터 시간 오름차순으로 10개 레코드)
+		String refStr = "timeseries:Welder:NozzleProductionLog#2023-05-25T04:20:42+10|Time";
 		printSegment(manager, refStr);
 	}
 	

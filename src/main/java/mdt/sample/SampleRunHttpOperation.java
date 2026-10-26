@@ -6,16 +6,18 @@ import java.util.concurrent.TimeUnit;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import okhttp3.OkHttpClient;
 
 import utils.async.AsyncResult;
 import utils.http.OkHttpClientUtils;
+import utils.rpc.restful.RESTfulAsyncRpcClient;
+import utils.rpc.restful.RpcRequestMessage;
 
 import mdt.client.HttpMDTManager;
 import mdt.client.instance.HttpMDTInstanceManager;
-import mdt.client.operation.HttpOperationClient;
-import mdt.client.operation.OperationRequest;
-import mdt.client.operation.OperationResponse;
+import mdt.model.MDTModelSerDe;
 import mdt.model.instance.MDTInstance;
 import mdt.model.sm.ref.MDTParameterReference;
 
@@ -25,6 +27,9 @@ import mdt.model.sm.ref.MDTParameterReference;
  */
 public class SampleRunHttpOperation {
 	private static final String ENDPOINT = "http://localhost:12985";
+	private static final String OPERATION_SERVER_ENDPOINT = "http://localhost:12987";
+	/** 연산 서버의 operations 디렉터리 하위 연산 디렉터리 이름. */
+	private static final String OP_ID = "Simulation";
 	
 	@SuppressWarnings("unused")
 	public static final void main(String... args) throws Exception {
@@ -47,23 +52,26 @@ public class SampleRunHttpOperation {
 		
 		OkHttpClient http = OkHttpClientUtils.newTrustAllOkHttpClientBuilder().build();
 
-		OperationRequest req = new OperationRequest();
-		req.setOperation("test/Simulation");
-		req.setInputArguments(Map.of("Data", dataSme, "IncAmount", incAmountSme, "SleepTime", sleepTimeSme));
+		Map<String,JsonNode> inputs = Map.of("Data", MDTModelSerDe.toJsonNode(dataSme),
+											"IncAmount", MDTModelSerDe.toJsonNode(incAmountSme),
+											"SleepTime", MDTModelSerDe.toJsonNode(sleepTimeSme));
+		RpcRequestMessage req = new RpcRequestMessage(inputs);
 		
-		HttpOperationClient opClient = HttpOperationClient.builder()
+		RESTfulAsyncRpcClient opClient = RESTfulAsyncRpcClient.builder()
 														.setHttpClient(http)
-														.setEndpoint("http://localhost:12987")
-														.setRequestBody(req)
+														.setBaseUrl(OPERATION_SERVER_ENDPOINT)
+														.setOperationEndpoint("/api/v1/operations/" + OP_ID)
+														.setRequestMessage(req)
+														.setJsonMapper(MDTModelSerDe.getJsonMapper())
 														.setPollInterval(Duration.ofSeconds(1))
 														.setTimeout(Duration.ofSeconds(10))
 														.build();
 		opClient.start();
-		AsyncResult<OperationResponse> result = opClient.waitForFinished(5, TimeUnit.SECONDS);
+		AsyncResult<Map<String,JsonNode>> result = opClient.waitForFinished(5, TimeUnit.SECONDS);
 		if ( result.isRunning() ) {
 			System.out.println("Cancelling...");
 			opClient.cancel(true);
-			result = opClient.poll();
+			result = opClient.waitForFinished();
 		}
 		System.out.println(result);
 	}
