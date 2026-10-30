@@ -25,30 +25,21 @@ repositories {
 	mavenCentral()
 }
 
-ext {
-	lombok_version = '1.18.46'
-
-	okhttp_version = '4.12.0'
-	aas4j_version = '1.0.5'
-
-	postgresql_version = '42.7.7'
-}
-
 dependencies {
 	implementation project(":utils")
 	implementation project(":mdt-client")
 	
-	implementation "org.eclipse.digitaltwin.aas4j:aas4j-model:${aas4j_version}"
-	implementation "org.eclipse.digitaltwin.aas4j:aas4j-dataformat-aasx:${aas4j_version}"
+	implementation libs.aas4j.model
+	implementation libs.aas4j.dataformat.aasx
 
 	// Lombok (from the project :utils)
-	compileOnly "org.projectlombok:lombok:${lombok_version}"
-	annotationProcessor "org.projectlombok:lombok:${lombok_version}"
+	compileOnly libs.lombok
+	annotationProcessor libs.lombok
 	
-	runtimeOnly "org.postgresql:postgresql:${postgresql_version}"
+	runtimeOnly libs.postgresql
 	
 	// HTTP Client
-	implementation "com.squareup.okhttp3:okhttp:${okhttp_version}"
+	implementation libs.okhttp
 }
 
 jar {
