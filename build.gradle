@@ -1,16 +1,11 @@
 plugins {
 	id 'java'
-	id 'application'
 	id("com.gradleup.shadow") version "9.3.0"
 	id 'eclipse'
 }
 
 group = 'etri'
 version = System.getenv("MDT_BUILD_VERSION") ?: "unknown"
-
-application {
-	mainClass = 'mdt.cli.MDTCommandsMain'
-}
 
 java {
 	sourceCompatibility = JavaVersion.VERSION_21
@@ -27,7 +22,6 @@ configurations {
 }
 
 repositories {
-    mavenLocal()
 	mavenCentral()
 }
 
@@ -37,7 +31,7 @@ ext {
 	okhttp_version = '4.12.0'
 	aas4j_version = '1.0.5'
 
-	postgresql_version = '42.3.3'
+	postgresql_version = '42.7.7'
 }
 
 dependencies {
@@ -62,6 +56,16 @@ jar {
 	// 다른 프로젝트의 logback.xml만 제외하고, 자신의 것은 포함
 	exclude 'logback-test.xml'
 	exclude 'logback-spring.xml'
+}
+
+// 예제마다 main 메서드가 있으므로 대표 main 클래스를 두지 않는다. 실행:
+//   gradle runSample -Psample=ListMDTInstances [--args='...']
+tasks.register('runSample', JavaExec) {
+	group = 'application'
+	description = 'Runs a sample in mdt.sample (-Psample=<class name>)'
+	classpath = sourceSets.main.runtimeClasspath
+	mainClass = providers.gradleProperty('sample').map { "mdt.sample.${it}" }
+	standardInput = System.in
 }
 
 shadowJar {
