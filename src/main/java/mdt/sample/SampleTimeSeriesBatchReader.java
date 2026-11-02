@@ -64,7 +64,7 @@ public class SampleTimeSeriesBatchReader {
 		int batchSize;
 		if ( args.length == 2 ) {
 			// 시작 시각이 주어진 경우는 해당 시각부터 조회한다.
-			startTs = Instants.fromString(args[0]);
+			startTs = Instants.parse(args[0]);
 			batchSize = Integer.parseInt(args[1]);
 		}
 		else if ( args.length == 1 ) {
@@ -219,7 +219,7 @@ public class SampleTimeSeriesBatchReader {
 		}
 
 		String cursorStr = Files.readString(CURSOR_FILE, StandardCharsets.UTF_8).trim();
-		return (cursorStr.length() > 0) ? Instants.fromString(cursorStr) : null;
+		return (cursorStr.length() > 0) ? Instants.parse(cursorStr) : null;
 	}
 
 	/**

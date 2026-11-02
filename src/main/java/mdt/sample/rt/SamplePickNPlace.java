@@ -102,7 +102,7 @@ public class SamplePickNPlace {
 		AASOperationClient moveGripperToTarget = new AASOperationClient(robotSvc, "Operations.MoveGripperToTarget",
 																Duration.ofMillis(100));
 		OperationVariable poseOpv = moveGripperToTarget.getInputVariables().get("Target");
-		ElementValues.update(poseOpv.getValue(), target);
+		ElementValues.updateFromValueString(poseOpv.getValue(), target);
 		
 		OperationResult result = moveGripperToTarget.run();
 		var outputs = result.getOutputArguments();
@@ -116,7 +116,7 @@ public class SamplePickNPlace {
 		AASOperationClient moveLinear = new AASOperationClient(robotSvc, "Operations.MoveToNamedTarget",
 																Duration.ofMillis(100));
 		OperationVariable poseOpv = moveLinear.getInputVariables().get("TargetName");
-		ElementValues.update(poseOpv.getValue(), target);
+		ElementValues.updateFromValueString(poseOpv.getValue(), target);
 		
 		DoublePropertyValue velScaleValue = new DoublePropertyValue(velScale);
 		OperationVariable velOpv = moveLinear.getInputVariables().get("VelocityScaling");
