@@ -17,14 +17,9 @@ public class SampleAddInstance {
 		HttpMDTInstanceManager manager = HttpMDTManager.connect(ENDPOINT)
 																	.getInstanceManager();
 		
-		// 'Test' 인스턴스 배포
-		File modelFile = new File("/home/kwlee/mdt/models/test/model.json");
-		File configFile = new File("/home/kwlee/mdt/models/test/config.json");
-		manager.addInstance("Test", null, modelFile, configFile);
-		
-		// 'surface' 인스턴스 배포
-		File modelFile2 = new File("/home/kwlee/mdt/models/surface/model.json");
-		File configFile2 = new File("/home/kwlee/mdt/models/surface/config.json");
-		manager.addInstance("surface", null, modelFile2, configFile2);
+		// 인스턴스 디렉터리(model.json, config.json 등)를 bundle로 묶어 올린다. port가 -1이면 매니저가 정한다.
+		// 2026-11-05 이전에는 서버에 없는 multipart 형식(jar/initialModel/instanceConf)의 addInstance를 썼다.
+		manager.addInstance("Test", -1, new File("/home/kwlee/mdt/models/test"));
+		manager.addInstance("surface", -1, new File("/home/kwlee/mdt/models/surface"));
 	}
 }
