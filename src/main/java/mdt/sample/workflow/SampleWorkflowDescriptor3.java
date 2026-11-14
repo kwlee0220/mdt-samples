@@ -4,10 +4,8 @@ import org.apache.commons.text.StringSubstitutor;
 
 import mdt.client.HttpMDTManager;
 import mdt.client.instance.HttpMDTInstanceManager;
-import mdt.model.NameValue;
 import mdt.model.instance.MDTInstanceManager;
 import mdt.task.RESTfulAsyncRpcTask;
-import mdt.task.TaskUtils;
 import mdt.workflow.WorkflowManager;
 import mdt.workflow.WorkflowModel;
 import mdt.workflow.model.ArgumentSpec;
@@ -52,10 +50,10 @@ public class SampleWorkflowDescriptor3 {
 
 		task.addOption(RESTfulAsyncRpcTask.OPTION_BASE_URL, resolvedEndpoint);
 		task.addOption(RESTfulAsyncRpcTask.OPTION_OPERATION_ENDPOINT, "/operations/AddAndSleep");
-		task.addOption(RESTfulAsyncRpcTask.OPTION_POLL_INTERVAL, "1.0");
-		task.addOption(RESTfulAsyncRpcTask.OPTION_TIMEOUT, "60");
-		task.addOption(RESTfulAsyncRpcTask.OPTION_LOG_LEVEL, "info");
-		task.getLabels().add(NameValue.of(TaskUtils.LABEL_MDT_OPERATION, "test:AddAndSleep"));
+		task.addOption(TaskDescriptor.OPTION_POLL_INTERVAL, "1.0");
+		task.addOption(TaskDescriptor.OPTION_TIMEOUT, "60");
+		task.addOption(TaskDescriptor.OPTION_LOG_LEVEL, "info");
+		task.addLabel(TaskDescriptor.LABEL_MDT_OPERATION, "test:AddAndSleep");
 
 		task.addInputArgument(ArgumentSpec.reference("Data", "param:test:Data"));
 		task.addInputArgument(ArgumentSpec.literal("IncAmount", 11));

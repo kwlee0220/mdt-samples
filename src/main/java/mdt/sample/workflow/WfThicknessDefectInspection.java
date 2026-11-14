@@ -2,12 +2,10 @@ package mdt.sample.workflow;
 
 import mdt.client.HttpMDTManager;
 import mdt.client.instance.HttpMDTInstanceManager;
-import mdt.model.NameValue;
 import mdt.model.instance.MDTInstanceManager;
 import mdt.model.sm.ref.DefaultSubmodelReference;
 import mdt.task.RESTfulAsyncRpcTask;
 import mdt.task.SetTask;
-import mdt.task.TaskUtils;
 import mdt.workflow.WorkflowManager;
 import mdt.workflow.WorkflowModel;
 import mdt.workflow.model.ArgumentSpec;
@@ -83,7 +81,7 @@ public class WfThicknessDefectInspection {
 		task.addOption("id", "inspector/ThicknessInspection");
 		task.addOption("timeout", "1m");
 		task.addOption("loglevel", "info");
-		task.getLabels().add(NameValue.of(TaskUtils.LABEL_MDT_OPERATION, "inspector:ThicknessInspection"));
+		task.addLabel(TaskDescriptor.LABEL_MDT_OPERATION, "inspector:ThicknessInspection");
 		
 		DefaultSubmodelReference smRef = DefaultSubmodelReference.ofIdShort("inspector", "ThicknessInspection");
 		smRef.activate(manager);
@@ -102,7 +100,7 @@ public class WfThicknessDefectInspection {
 		task.addOption("id", "inspector/UpdateDefectList");
 		task.addOption("timeout", "1m");
 		task.addOption("loglevel", "info");
-		task.getLabels().add(NameValue.of(TaskUtils.LABEL_MDT_OPERATION, "inspector:UpdateDefectList"));
+		task.addLabel(TaskDescriptor.LABEL_MDT_OPERATION, "inspector:UpdateDefectList");
 		
 		DefaultSubmodelReference smRef = DefaultSubmodelReference.ofIdShort("inspector", "UpdateDefectList");
 		smRef.activate(manager);

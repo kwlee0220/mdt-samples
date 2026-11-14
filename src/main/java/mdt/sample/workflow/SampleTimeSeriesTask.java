@@ -36,7 +36,7 @@ public class SampleTimeSeriesTask {
 		wfDesc.getTaskDescriptors().add(taskDesc);
 		
 		String wfJsonStr = MDTModelSerDe.toJsonString(wfDesc);
-		IOUtils.toFile(wfJsonStr, new File("/home/kwlee/tmp/wf_test.json"));
+		IOUtils.writeString(new File("/home/kwlee/tmp/wf_test.json"), wfJsonStr);
 
 		WorkflowManager wfManager = mdt.getWorkflowManager();
 		wfDesc = wfManager.addOrReplaceWorkflowModel(wfDesc);

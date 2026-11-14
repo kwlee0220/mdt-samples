@@ -32,7 +32,7 @@ public class SampleWorkflowDescriptor0 {
 		descriptor.setType(SetTask.class.getName());
 		
 		// option들을 설정한다.
-		descriptor.addOption(SetTask.OPTION_LOG_LEVEL, "info");
+		descriptor.addOption(TaskDescriptor.OPTION_LOG_LEVEL, "info");
 		
 		//
 		// 입출력 변수들을 설정한다.

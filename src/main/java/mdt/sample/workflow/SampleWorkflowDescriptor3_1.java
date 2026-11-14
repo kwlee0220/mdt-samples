@@ -2,7 +2,6 @@ package mdt.sample.workflow;
 
 import mdt.client.HttpMDTManager;
 import mdt.client.instance.HttpMDTInstanceManager;
-import mdt.model.NameValue;
 import mdt.model.instance.MDTInstanceManager;
 import mdt.model.sm.ref.DefaultElementReference;
 import mdt.model.sm.ref.MDTElementReference;
@@ -50,7 +49,7 @@ public class SampleWorkflowDescriptor3_1 {
 		descriptor.addOption(TaskDescriptor.OPTION_POLL_INTERVAL, "1.0");
 		descriptor.addOption(TaskDescriptor.OPTION_TIMEOUT, "60");
 		descriptor.addOption(TaskDescriptor.OPTION_LOG_LEVEL, "info");
-		descriptor.getLabels().add(NameValue.of(TaskDescriptor.LABEL_MDT_OPERATION, "test:AddAndSleep"));
+		descriptor.addLabel(TaskDescriptor.LABEL_MDT_OPERATION, "test:AddAndSleep");
 		
 		descriptor.addInputArgument(ArgumentSpec.reference("Data", "param:test:Data"));
 		descriptor.addInputArgument(ArgumentSpec.literal("IncAmount", 7));

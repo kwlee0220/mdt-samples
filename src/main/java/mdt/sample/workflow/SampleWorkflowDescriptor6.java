@@ -2,12 +2,10 @@ package mdt.sample.workflow;
 
 import mdt.client.HttpMDTManager;
 import mdt.client.instance.HttpMDTInstanceManager;
-import mdt.model.NameValue;
 import mdt.model.instance.MDTInstanceManager;
 import mdt.model.sm.ref.DefaultSubmodelReference;
 import mdt.task.RESTfulAsyncRpcTask;
 import mdt.task.SetTask;
-import mdt.task.TaskUtils;
 import mdt.workflow.WorkflowManager;
 import mdt.workflow.WorkflowModel;
 import mdt.workflow.model.ArgumentSpec;
@@ -87,7 +85,7 @@ public class SampleWorkflowDescriptor6 {
 		task.addOption("id", "ktech_inspector/SurfaceErrorDetection");
 		task.addOption("timeout", "1m");
 		task.addOption("loglevel", "info");
-		task.getLabels().add(NameValue.of(TaskUtils.LABEL_MDT_OPERATION, "ktech_inspector:SurfaceErrorDetection"));
+		task.addLabel(TaskDescriptor.LABEL_MDT_OPERATION, "ktech_inspector:SurfaceErrorDetection");
 		
 		DefaultSubmodelReference smRef = DefaultSubmodelReference.ofIdShort("ktech_inspector", "SurfaceErrorDetection");
 		smRef.activate(manager);
@@ -107,7 +105,7 @@ public class SampleWorkflowDescriptor6 {
 		task.addOption("id", "ktech_inspector/STErrorPrediction");
 		task.addOption("timeout", "1m");
 		task.addOption("loglevel", "info");
-		task.getLabels().add(NameValue.of(TaskUtils.LABEL_MDT_OPERATION, "ktech_inspector:STErrorPrediction"));
+		task.addLabel(TaskDescriptor.LABEL_MDT_OPERATION, "ktech_inspector:STErrorPrediction");
 		
 		DefaultSubmodelReference smRef = DefaultSubmodelReference.ofIdShort("ktech_inspector", "STErrorPrediction");
 		smRef.activate(manager);
@@ -127,7 +125,7 @@ public class SampleWorkflowDescriptor6 {
 		task.addOption("id", "ktech_inspector/LTErrorPrediction");
 		task.addOption("timeout", "1m");
 		task.addOption("loglevel", "info");
-		task.getLabels().add(NameValue.of(TaskUtils.LABEL_MDT_OPERATION, "ktech_inspector:LTErrorPrediction"));
+		task.addLabel(TaskDescriptor.LABEL_MDT_OPERATION, "ktech_inspector:LTErrorPrediction");
 		
 		DefaultSubmodelReference smRef = DefaultSubmodelReference.ofIdShort("ktech_inspector", "LTErrorPrediction");
 		smRef.activate(manager);

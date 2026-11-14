@@ -2,12 +2,10 @@ package mdt.sample.workflow;
 
 import mdt.client.HttpMDTManager;
 import mdt.client.instance.HttpMDTInstanceManager;
-import mdt.model.NameValue;
 import mdt.model.instance.MDTInstanceManager;
 import mdt.model.sm.ref.DefaultSubmodelReference;
 import mdt.task.RESTfulAsyncRpcTask;
 import mdt.task.SetTask;
-import mdt.task.TaskUtils;
 import mdt.workflow.WorkflowManager;
 import mdt.workflow.WorkflowModel;
 import mdt.workflow.model.ArgumentSpec;
@@ -67,7 +65,7 @@ public class SampleWorkflowDescriptor5 {
 		task.addOption("id", "ktech_inspector/SurfaceErrorDetection");
 		task.addOption("timeout", "1m");
 		task.addOption("loglevel", "info");
-		task.getLabels().add(NameValue.of(TaskUtils.LABEL_MDT_OPERATION, "ktech_inspector:SurfaceErrorDetection"));
+		task.addLabel(TaskDescriptor.LABEL_MDT_OPERATION, "ktech_inspector:SurfaceErrorDetection");
 		
 		DefaultSubmodelReference smRef = DefaultSubmodelReference.ofIdShort("ktech_inspector", "SurfaceErrorDetection");
 		smRef.activate(manager);

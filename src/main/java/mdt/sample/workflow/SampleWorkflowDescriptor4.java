@@ -6,10 +6,8 @@ import mdt.model.sm.ref.DefaultElementReference;
 import mdt.model.sm.ref.DefaultSubmodelReference;
 import mdt.model.sm.ref.DefaultSubmodelReference.ByIdShortSubmodelReference;
 import mdt.task.AASOperationTask;
-import mdt.task.MDTTask;
 import mdt.task.RESTfulAsyncRpcTask;
 import mdt.task.SetTask;
-import mdt.task.TaskUtils;
 import mdt.workflow.WorkflowManager;
 import mdt.workflow.WorkflowModel;
 import mdt.workflow.model.ArgumentSpec;
@@ -84,9 +82,9 @@ public class SampleWorkflowDescriptor4 {
 		descriptor.setType(RESTfulAsyncRpcTask.class.getName());
 		descriptor.addOption(RESTfulAsyncRpcTask.OPTION_BASE_URL, HTTP_OP_SERVER_ENDPOINT);
 		descriptor.addOption(RESTfulAsyncRpcTask.OPTION_OPERATION_ENDPOINT, smRef.getInstanceId() + "/" + smRef.getSubmodelIdShort());
-		descriptor.addOption(MDTTask.OPTION_TIMEOUT, "im");
-		descriptor.addOption(MDTTask.OPTION_POLL_INTERVAL, "3s");
-		descriptor.addLabel(TaskUtils.LABEL_MDT_OPERATION, smRef.toStringExpr());
+		descriptor.addOption(TaskDescriptor.OPTION_TIMEOUT, "im");
+		descriptor.addOption(TaskDescriptor.OPTION_POLL_INTERVAL, "3s");
+		descriptor.addLabel(TaskDescriptor.LABEL_MDT_OPERATION, smRef.toStringExpr());
 		descriptor.addDependency("copy-data", "copy-inc-amount", "set-sleeptime");
 		
 		return descriptor;
@@ -102,7 +100,7 @@ public class SampleWorkflowDescriptor4 {
 		descriptor.addOption(TaskDescriptor.OPTION_TIMEOUT, "im");
 		descriptor.addOption(TaskDescriptor.OPTION_POLL_INTERVAL, "3s");
 		descriptor.addOption(TaskDescriptor.OPTION_LOG_LEVEL, "info");
-		descriptor.addLabel(TaskUtils.LABEL_MDT_OPERATION, smRef.toStringExpr());
+		descriptor.addLabel(TaskDescriptor.LABEL_MDT_OPERATION, smRef.toStringExpr());
 		descriptor.addDependency("copy-data", "copy-inc-amount", "set-sleeptime");
 		
 		return descriptor;
