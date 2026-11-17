@@ -57,7 +57,7 @@ These rules come from the current mdt-client / mdt-workflow / mdt-operation-http
 
 - **Workflow model ids, task ids and argument ids must be Python identifiers.** mdt-workflow renders each model into an Airflow DAG and rejects others (`invalid DAG id ... (invalid Python identifier)`; `OperatorSpec` and `DagArgument` check task and argument ids the same way). Use `sample_workflow_0` and `copy_data`, not `sample-workflow-0` and `copy-data`.
 - **`SetTask` arguments are `source` (input) and `target` (output)** (`SetTask.ARG_SOURCE` / `ARG_TARGET`). mdtpy's `SetElementOperator` raises "Input argument 'source' is required" otherwise.
-- **`RESTfulAsyncRpcTask` options are `baseUrl` and `endpoint`, both required** (`RESTfulAsyncRpcTask.OPTION_BASE_URL` / `OPTION_OPERATION_ENDPOINT`). The old `server` / `id` options are not read.
+- **`RESTfulAsyncRpcTask` options are `baseUrl` and `endpoint`, both required** (`RESTfulAsyncRpcTask.OPTION_BASE_URL` / `OPTION_OPERATION_ENDPOINT`). The `server` / `id` options are not read.
 - **Where `/api/v1` goes:** `baseUrl` is the operation server root (`http://host:12987`) and `endpoint` carries `/api/v1/operations/<opId>`. The client appends both `endpoint` and the returned session endpoint (`/api/v1/sessions/...`) to `baseUrl`. So a `baseUrl` ending in `/api/v1` breaks polling, and an `endpoint` without `/api/v1` gives a 404 on start.
 - **AAS operations:** use `AASOperationTask` with `TaskDescriptor.OPTION_OPERATION` (an element reference expression to the `Operation` element).
 - **Timeouts and poll intervals** take duration strings (`"1m"`, `"3s"`) or plain numbers meaning seconds. In Airflow, `timeout` / `poll` are ignored with a warning for most operators. A typo therefore surfaces only when the task is run as a Java `MDTTask`.
@@ -65,11 +65,11 @@ These rules come from the current mdt-client / mdt-workflow / mdt-operation-http
 - **`Execution.waitForFinished(timeout, unit)` throws `TimeoutException`** when the execution is still running. It does not return a running result, so check for it with `catch`, not with `isRunning()`.
 - **Robot operation outputs:** look them up by idShort rather than `getOutputArguments().getFirst()`.
 
-## Known problems (as of 2026-11-08, from a code review; not fixed)
+## Known problems
 
 - **Workflow samples break the rules above.** Every workflow sample except `SampleTimeSeriesTask` uses hyphenated ids, so registration fails.
   - Seven samples pass `SetTask` an input named `value`: `SampleWorkflowDescriptor1`/`2`/`5`/`6` and the three `Wf*` classes.
-  - `SampleWorkflowDescriptor5`/`6` and the `Wf*` classes use the old `server` / `id` options.
+  - `SampleWorkflowDescriptor5`/`6` and the `Wf*` classes use the `server` / `id` options, which are not read.
   - `SampleTimeSeriesTask` and `SampleWorkflowDescriptor3` put `/api/v1` in the wrong place.
   - `SampleWorkflowDescriptor3_1` pairs `RESTfulAsyncRpcTask` with `OPTION_OPERATION` and adds its output as an input.
   - `SampleWorkflowDescriptor4` has timeout `"im"`.
@@ -79,4 +79,4 @@ These rules come from the current mdt-client / mdt-workflow / mdt-operation-http
 - **`SampleTimeSeriesBatchReader`:** it casts operation outputs with `(Double)` / `(String)` and reads the ampere field by index.
 - **Stale comments:** some comments disagree with the code (instance `'test'` vs `Welder`; the pick-and-place waypoint table vs the constants).
 
-There is no review tracking document for these. Ask before fixing them in bulk.
+Ask before fixing them in bulk.
